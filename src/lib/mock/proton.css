@@ -1,0 +1,578 @@
+/* Approximates Proton Mail's stylesheet. Class names are Proton's and the values are
+   measured from the scrapes, so a tweak selector lands here exactly as it does in the app.
+   Ships none of Proton's own CSS or icons. */
+
+.mock {
+	--fg: #0c0c14;
+	--weak: #706d6b;
+	--border: #dcdad8;
+	--hover: #f3f2f0;
+	--active: #e8e6e3;
+	--accent: #6d4aff;
+
+	/* Proton names the theme accent this, and a tweak reads it by that name */
+	--primary: var(--accent);
+
+	/* Proton's --border-radius-sm, half of the 8px it rounds everything else by */
+	--radius-sm: 0.25rem;
+
+	color: var(--fg);
+	background: #fff;
+	font: 400 14px/1.4 var(--ui-font);
+}
+
+.mock *,
+.mock *::before,
+.mock *::after {
+	box-sizing: border-box;
+}
+
+.mock ul,
+.mock li {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+/* The picker styles its own buttons globally, and the mock sits in the same page */
+.mock button,
+.mock input {
+	font: inherit;
+	color: inherit;
+	background: none;
+	border: 0;
+	padding: 0;
+	text-align: start;
+}
+
+/* Utilities Proton ships under these same names */
+.mock .flex { display: flex; }
+.mock .flex-column { flex-direction: column; }
+.mock .flex-row { flex-direction: row; }
+.mock .flex-nowrap { flex-wrap: nowrap; }
+.mock .items-center { align-items: center; }
+.mock .items-stretch { align-items: stretch; }
+.mock .justify-center { justify-content: center; }
+.mock .justify-start { justify-content: flex-start; }
+.mock .justify-end { justify-content: flex-end; }
+.mock .justify-space-between { justify-content: space-between; }
+.mock .flex-1 { flex: 1; min-inline-size: 0; }
+.mock .flex-auto { flex: 1 1 auto; }
+.mock .shrink-0 { flex-shrink: 0; }
+.mock .hidden { display: none; }
+.mock .w-full { inline-size: 100%; }
+.mock .w-custom { inline-size: var(--w-custom); }
+.mock .max-w-full { max-inline-size: 100%; }
+.mock .gap-1 { gap: 0.25rem; }
+.mock .gap-2 { gap: 0.5rem; }
+.mock .gap-3 { gap: 0.75rem; }
+.mock .m-0 { margin: 0; }
+.mock .m-4 { margin: 1rem; }
+.mock .mb-0 { margin-block-end: 0; }
+.mock .mt-4 { margin-block-start: 1rem; }
+.mock .ml-1 { margin-inline-start: 0.25rem; }
+.mock .ml-2 { margin-inline-start: 0.5rem; }
+.mock .mr-3 { margin-inline-end: 0.75rem; }
+.mock .px-3 { padding-inline: 0.75rem; }
+.mock .px-4 { padding-inline: 1rem; }
+.mock .py-2 { padding-block: 0.5rem; }
+.mock .rounded-sm { border-radius: var(--radius-sm); }
+.mock .rounded { border-radius: 0.5rem; }
+.mock .mt-1 { margin-block-start: 0.25rem; }
+.mock .overflow-hidden { overflow: hidden; }
+.mock .text-sm { font-size: 0.875rem; }
+.mock .text-bold { font-weight: 700; }
+.mock .color-weak { color: var(--weak); }
+.mock .text-ellipsis { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.mock .sr-only {
+	position: absolute;
+	inline-size: 1px;
+	block-size: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+}
+
+/* Sidebar */
+.mock .navigation {
+	display: flex;
+	flex-direction: column;
+
+	/* Proton sizes the sidebar from a container the mock has no reason to reproduce */
+	flex: 0 0 15rem;
+	border-inline-end: 1px solid var(--border);
+	overflow: auto;
+	padding-block: 0.5rem;
+}
+
+/* Proton writes this as the mb-0.5 utility, which an escaped class name cannot express here */
+.mock .navigation-item {
+	inline-size: 100%;
+	margin-block-end: 0.125rem;
+}
+
+.mock .navigation-link,
+.mock .navigation-link-header-group {
+	block-size: 2.25rem;
+	display: flex;
+	align-items: center;
+	padding-inline: 0.75rem 0.5rem;
+	border-radius: 0.5rem;
+	text-decoration: none;
+	color: inherit;
+}
+
+.mock .navigation-link:hover { background: var(--hover); }
+.mock .navigation-link.active { background: var(--active); font-weight: 600; }
+
+/* Both carry their own size rather than taking the row's, which is why a compact row
+   leaves their hover background standing proud of it */
+.mock .navigation-link-header-group-link {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	block-size: 2.25rem;
+	border-radius: var(--radius-sm);
+	cursor: pointer;
+	color: var(--weak);
+	font-size: 0.875rem;
+	font-weight: 600;
+}
+
+.mock .navigation-link-header-group-control {
+	display: flex;
+	align-items: center;
+	border-radius: var(--radius-sm);
+	color: var(--weak);
+	padding: 0.5em;
+	cursor: pointer;
+}
+
+.mock .navigation-link-header-group-link:hover,
+.mock .navigation-link-header-group-control:hover { background: var(--hover); }
+
+.mock .navigation-icon { flex-shrink: 0; color: var(--weak); }
+.mock .navigation-icon--expand { flex-shrink: 0; }
+
+.mock .navigation-counter-item {
+	margin-inline-start: auto;
+	font-size: 0.75rem;
+	color: var(--weak);
+}
+
+.mock .navigation-counter-item:empty { display: none; }
+
+/* Folder rows. The indent of a subfolder is the only thing that marks it as one */
+.mock .navigation-icon-empty { inline-size: 1rem; }
+.mock [data-level='1'] { padding-inline-start: 1em; }
+.mock [data-level='2'] { padding-inline-start: 2em; }
+
+/* Mail list */
+.mock .items-column-list {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-inline-size: 0;
+	overflow: auto;
+}
+
+.mock .item-container {
+	--item-container-padding-inline: 1rem;
+
+	padding-block: var(--item-container-padding-block);
+	padding-inline: var(--item-container-padding-inline);
+	display: flex;
+	flex-wrap: nowrap;
+	cursor: pointer;
+	border-block: 1px solid var(--border);
+	margin-block-start: -1px;
+}
+
+.mock.is-comfortable .is-column .item-container { --item-container-padding-block: 1rem; }
+.mock.is-compact .is-column .item-container { --item-container-padding-block: 0.5rem; }
+.mock.is-comfortable .is-row .item-container { --item-container-padding-block: 0.625rem; }
+.mock.is-compact .is-row .item-container { --item-container-padding-block: 0.375rem; }
+
+.mock .item-container:hover { background: var(--hover); }
+
+/* Proton paints the open conversation in the theme accent, with white text on top */
+.mock .item-is-selected { background: var(--primary); }
+
+/* Proton declares that white once on the row, the mock has to say it again wherever it
+   hands out a weak colour of its own */
+.mock .item-is-selected,
+.mock .item-is-selected .item-secondline,
+.mock .item-is-selected .item-senddate-col,
+.mock .item-is-selected .item-star {
+	color: #fff;
+}
+.mock .item-container.unread { font-weight: 600; }
+
+/* The round hit area around the checkbox, and the tallest thing in a compact row */
+.mock .item-icon-compact {
+	inline-size: 2rem;
+	block-size: 2rem;
+	border-radius: 50%;
+	flex-shrink: 0;
+	justify-content: center;
+}
+
+.mock .item-container--column .item-icon-compact { margin-block: -0.1875rem; }
+.mock .item-container--row .item-icon-compact { margin-block: auto; }
+.mock .item-icon-compact:hover { background: var(--active); }
+
+/* Comfortable trades the selection box for a sender avatar, and that avatar is what sets
+   the row height there. The label reaches an em past the row on every side, which is the
+   hit area for a click, and costs nothing because the margin takes it back. */
+.mock .item-checkbox-label {
+	position: relative;
+	margin-block: -1em;
+	padding-block: 1em;
+	margin-inline-start: -1em;
+	padding-inline-start: 1em;
+}
+
+.mock .item-checkbox { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+
+.mock .item-icon {
+	inline-size: 1.75rem;
+	block-size: 1.75rem;
+	flex-shrink: 0;
+	display: inline-flex;
+	font-size: 0.75rem;
+	background: var(--active);
+	color: var(--weak);
+}
+
+.mock .item-abbr { margin: auto; overflow: hidden; }
+
+/* Only there once the pointer or a tick is on it, and it takes the picture's place */
+.mock .item-icon-fakecheck { display: none; margin: auto; }
+
+.mock .item-checkbox:hover + .item-icon > .item-abbr,
+.mock .item-checkbox:checked + .item-icon > .item-abbr { display: none; }
+
+.mock .item-checkbox:hover + .item-icon > .item-icon-fakecheck,
+.mock .item-checkbox:checked + .item-icon > .item-icon-fakecheck { display: flex; }
+
+.mock .item-checkbox:checked + .item-icon { background: var(--primary); color: #fff; }
+
+.mock .item-titlesender {
+	flex: 1;
+	min-inline-size: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.mock .item-firstline { display: flex; align-items: center; }
+
+.mock .item-senders {
+	flex: 1;
+	min-inline-size: 0;
+	display: flex;
+	align-items: center;
+	flex-wrap: nowrap;
+	padding-inline-end: 1rem;
+}
+
+.mock .item-firstline-infos {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.mock .item-senddate-col { font-size: 0.875rem; color: var(--weak); }
+
+.mock .item-secondline {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	max-inline-size: 100%;
+	color: var(--weak);
+}
+
+/* No gap: Proton spaces these with margin classes on the children, and a tweak that
+   pulls on those margins has to see the same thing here as in the app. */
+.mock .item-subject {
+	flex: 1;
+	min-inline-size: 0;
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+}
+
+.mock .item-icons {
+	flex-shrink: 0;
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	gap: 0.25rem;
+}
+
+.mock .item-star { display: flex; color: var(--weak); cursor: pointer; }
+.mock .item-star.starred { color: #d9a400; }
+
+/* Row mode is already one line */
+.mock .item-container--row .item-titlesender {
+	flex-direction: row;
+	align-items: center;
+	gap: 0.75rem;
+	inline-size: 100%;
+}
+
+.mock .item-container--row .item-senders { flex: 0 0 auto; padding-inline-end: 0; }
+.mock .item-container--row .item-subject { flex: 1; }
+
+/* Quick actions on a row. Proton swaps them in for the date and the chips on hover, and
+   they stand taller than the row, which is the jump the tweak takes out. */
+.mock .item-hover-action-buttons { display: none; }
+
+.mock .item-container:hover .item-hover-action-buttons {
+	display: inline-flex;
+	position: relative;
+}
+
+.mock .item-container:hover .item-meta-infos,
+.mock .item-container:hover .item-firstline-infos,
+.mock .item-container--row:hover .item-senddate-row { display: none; }
+
+.mock .is-column .item-hover-action-buttons {
+	margin-inline-end: -0.375rem;
+	inset-block-start: 0.625rem;
+}
+
+.mock .is-row .item-hover-action-buttons {
+	margin-inline-end: -0.375rem;
+	margin-block-start: -0.5rem;
+	inset-block-start: 0.25rem;
+}
+
+.mock .button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 0.5rem;
+	color: var(--weak);
+	cursor: pointer;
+}
+
+.mock .button-for-icon.button-small { padding: 0.357em; font-size: 0.875rem; }
+.mock .button-ghost-weak:hover { background: var(--active); }
+
+/* Label chips. Stacked means every chip after the first shrinks to a coloured stub, which
+   is why the real list shows one readable label rather than a row of them. */
+.mock .label-stack {
+	--item-wide: 10em;
+	--item-narrow: 1.5em;
+	--item-scale: 0.6666666667;
+
+	font-size: 0.6875rem;
+	font-weight: 600;
+	min-inline-size: 0;
+}
+
+/* Pulls back the margin every chip carries, so an unstacked row is no taller for them */
+.mock .label-stack:not(.is-stacked) { margin: -0.125em; }
+
+.mock .label-stack-item {
+	min-inline-size: var(--item-narrow);
+	max-inline-size: var(--item-wide);
+	margin: 0.125rem;
+	overflow: hidden;
+	border-radius: var(--radius-sm);
+	line-height: 1.64;
+	background-color: var(--label-bg);
+	color: #fff;
+}
+
+.mock .label-stack-item-inner {
+	padding-inline: 0.375rem;
+	border-radius: inherit;
+	text-align: start;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	cursor: pointer;
+	opacity: var(--button-opacity, 1);
+}
+
+.mock .label-stack-overflow-count {
+	border-radius: var(--radius-sm);
+	line-height: 1.64;
+	background: var(--active);
+	margin-inline-start: 0.125em;
+	cursor: pointer;
+}
+
+.mock .label-stack-overflow-count > * {
+	display: block;
+	padding-inline: 0.25em 0.375em;
+	color: var(--weak);
+}
+
+.mock .label-stack.is-stacked {
+	overflow: hidden;
+	align-items: center;
+	flex-wrap: nowrap;
+}
+
+.mock .label-stack.is-stacked .label-stack-item { margin: 0; }
+
+.mock .label-stack.is-stacked .label-stack-item:not(:first-child) {
+	--button-opacity: 0;
+
+	max-inline-size: var(--item-narrow);
+	transform: scale(var(--item-scale));
+}
+
+/* Toolbar above the list */
+.mock .toolbar {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+	padding: 0.375rem 0.5rem;
+	border-block-end: 1px solid var(--border);
+}
+
+.mock .toolbar-button {
+	display: flex;
+	align-items: center;
+	gap: 0.25rem;
+	padding: 0.25rem 0.5rem;
+	border-radius: 0.375rem;
+	color: var(--weak);
+	cursor: pointer;
+	font-size: 0.8125rem;
+}
+
+.mock .toolbar-button:hover { background: var(--hover); }
+
+/* Label as dialog. Proton writes --top, --height and --available-height inline, and the
+   list carries its own cap, which is the thing that really limits the row count. */
+.mock .dropdown {
+	position: absolute;
+	inset-block-start: var(--top);
+	inset-inline-end: 1rem;
+	inline-size: 22em;
+	background: #fff;
+	border: 1px solid var(--border);
+	border-radius: 0.75rem;
+	box-shadow: 0 0.5rem 1.5rem rgb(0 0 0 / 0.14);
+	overflow: hidden;
+	z-index: 2;
+}
+
+.mock .dropdown-content {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	block-size: var(--height);
+	max-block-size: var(--available-height);
+	overflow: hidden;
+}
+
+.mock .dropdown-content form {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	flex: 1 1 auto;
+	min-block-size: 0;
+}
+
+.mock .label-dropdown-list {
+	max-block-size: 13.5em;
+	overflow: auto;
+	flex: 1 1 auto;
+}
+
+.mock .dropdown-item {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
+	padding-block: 0.5rem;
+	padding-inline: 1rem;
+	cursor: pointer;
+	inline-size: 100%;
+}
+
+.mock .dropdown-item:hover { background: var(--hover); }
+
+.mock .field {
+	inline-size: 100%;
+	border: 1px solid var(--border);
+	border-radius: 0.5rem;
+	padding: 0.375rem 0.5rem;
+}
+
+.mock .button-solid-norm {
+	background: var(--accent);
+	color: #fff;
+	border-radius: 0.5rem;
+	padding: 0.375rem 0.75rem;
+	text-align: center;
+	cursor: pointer;
+}
+
+.mock .checkbox-fakecheck {
+	min-inline-size: 1.25rem;
+	inline-size: 1.25rem;
+	block-size: 1.25rem;
+	margin: auto;
+	border: 1px solid var(--border);
+	border-radius: var(--radius-sm);
+	flex-shrink: 0;
+	display: block;
+}
+
+.mock .checkbox-container {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	cursor: pointer;
+}
+
+.mock .checkbox-input { position: absolute; opacity: 0; }
+
+.mock hr { border: 0; border-block-start: 1px solid var(--border); }
+
+.mock .relative { position: relative; }
+.mock .inline-flex { display: inline-flex; }
+.mock .my-0 { margin-block: 0; }
+.mock .unstyled { list-style: none; margin: 0; padding: 0; }
+.mock .item-meta-infos { display: flex; align-items: center; }
+
+.mock .item-senddate-row {
+	font-size: 0.875rem;
+	color: var(--weak);
+	gap: 0.5rem;
+}
+
+/* An attachment at comfortable density, a bordered button carrying the file name */
+.mock .attachment-thumbnail-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(0, max-content));
+}
+
+.mock .attachment-thumbnail {
+	border: 1px solid var(--border);
+	border-radius: 0.5rem;
+	background: transparent;
+	color: inherit;
+	font-size: 0.875rem;
+	padding: 0.3125rem;
+	min-inline-size: 4.5rem;
+	max-inline-size: 11.25rem;
+	cursor: pointer;
+}
+
+.mock .attachment-thumbnail-name {
+	line-height: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.mock .attachment-thumbnail-name span span { padding-block: 0.125rem; }
+.mock .text-pre { white-space: pre; }

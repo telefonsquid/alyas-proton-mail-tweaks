@@ -1,0 +1,416 @@
+/* ==UserStyle==
+@name           Alya's Proton Mail Tweaks
+@namespace      proton-mail-css-tweaks
+@version        1.0.0
+@description    Makes Proton Mail's web UI denser and drops the parts you do not use.
+@preprocessor   less
+
+@var checkbox removeStarred "Remove everything Starred" 1
+@var checkbox hideViews "Remove Views" 1
+@var checkbox hideFolders "Remove Folders" 1
+@var checkbox hideFoldersEverywhere "Remove folders everywhere else" 0
+@var checkbox hideLabels "Remove Labels" 0
+@var checkbox hideLabelsEverywhere "Remove labels everywhere else" 0
+@var checkbox compactSidebar "Compact sidebar" 1
+@var range sidebarRowHeight "Sidebar: Row height" [1.75, 1.25, 2.25, 0.125, "rem"]
+@var range sidebarRowGap "Sidebar: Gap between rows" [0, 0, 8, 1, "px"]
+@var range sidebarGroupGap "Sidebar: Gap above a section" [8, 0, 24, 1, "px"]
+@var checkbox removeMoreToggle "Remove the More and Less button" 1
+@var checkbox hideMoreFolders "Hide those folders instead" 0
+@var checkbox compactList "Compact mail list" 1
+@var range listPadColumn "Mail list: Row padding, column mode" [4, 0, 16, 1, "px"]
+@var range listPadRow "Mail list: Row padding, row mode" [3, 0, 16, 1, "px"]
+@var range listPadInline "Mail list: Padding left and right" [12, 0, 24, 1, "px"]
+@var range checkboxSize "Mail list: Selection box" [16, 12, 20, 1, "px"]
+@var checkbox columnSingleLine "Column mode on one line" 1
+@var range senderWidth "Mail list: Sender column width" [15, 8, 26, 0.5, "rem"]
+@var checkbox chipAttachments "Attachments as chips" 1
+@var checkbox boldSenders "Bold senders" 1
+@var checkbox accentLocationIcons "Accent the folder icons" 1
+@var range locationIconOpacity "Mail list: Strength" [100, 40, 100, 5, "%"]
+@var checkbox conversationCount "Accented conversation count" 1
+@var range countGap "Mail list: Space around" [4, 0, 12, 1, "px"]
+@var range countFontSize "Mail list: Count size" [14, 10, 18, 1, "px"]
+@var checkbox hoverActions "Steady hover buttons" 1
+@var range hoverButtonSize "Mail list: Button size" [22, 16, 32, 1, "px"]
+@var checkbox labelDialogHeight "Taller Label as and Move to dialogs" 1
+@var range labelDialogSize "Dialogs: Dialog height" [70, 40, 95, 5, "vh"]
+@var checkbox labelDialogCompact "Compact dialog rows" 1
+@var range labelRowPad "Dialogs: Row padding" [2, 0, 8, 1, "px"]
+@var range labelChromeGap "Dialogs: Space around the buttons" [6, 0, 16, 1, "px"]
+==/UserStyle== */
+
+@-moz-document domain("mail.proton.me") {
+	/* Remove everything Starred */
+	& when (@removeStarred = 1) {
+		[data-testid='sidebar-label:Starred'] { display: none !important; }
+
+		.item-container .item-star { display: none !important; }
+
+		/* Row mode puts the star in its own flex child, which would leave a gap behind */
+		.item-container--row div:has(> .item-star) { display: none !important; }
+
+		/* Open mail. Hiding the wrapper takes its right margin with it */
+		.message-header-star { display: none !important; }
+	}
+
+	/* Remove Views */
+	& when (@hideViews = 1) {
+		.navigation-list > li:has([data-shortcut-target='toggle-views']),
+		.navigation-list > li:has([data-shortcut-target='toggle-views']) + div { display: none !important; }
+	}
+
+	/* Remove Folders */
+	& when (@hideFolders = 1) {
+		.navigation-list > li:has([data-shortcut-target='toggle-folders']),
+		.navigation-list > li:has([data-shortcut-target='toggle-folders']) + div { display: none !important; }
+
+		/* Subfolders sit next to their parent rather than inside it, and carry the same class */
+		.navigation-list > li.navigation-item--folder { display: none !important; }
+	}
+
+	/* Remove folders everywhere else */
+	& when (@hideFolders = 1) and (@hideFoldersEverywhere = 1) {
+		/* Only the list and the open mail carry this, so it needs no scope */
+		[data-testid^='item-location-'] { display: none !important; }
+
+		[data-testid='toolbar:moveto'],
+		[data-testid='message-header-expanded:folder-dropdown'] { display: none !important; }
+	}
+
+	/* Remove Labels */
+	& when (@hideLabels = 1) {
+		.navigation-list > li:has([data-shortcut-target='toggle-labels']),
+		.navigation-list > li:has([data-shortcut-target='toggle-labels']) + div,
+		.navigation-list > li.navigation-item--label { display: none !important; }
+	}
+
+	/* Remove labels everywhere else */
+	& when (@hideLabels = 1) and (@hideLabelsEverywhere = 1) {
+		.item-container .label-stack { display: none !important; }
+
+		/* Open mail. Hiding the wrapper takes its bottom margin with it */
+		.message-header-expanded-label-container { display: none !important; }
+
+		[data-testid='toolbar:labelas'],
+		[data-testid='message-header-expanded:label-dropdown'] { display: none !important; }
+	}
+
+	/* Compact sidebar */
+	& when (@compactSidebar = 1) {
+		.navigation-link,
+		.navigation-link-header-group { block-size: @sidebarRowHeight !important; }
+
+		/* A section header carries its own 2.25rem, so without this the hover background
+		   stands taller than the row it sits in */
+		.navigation-link-header-group-link { block-size: @sidebarRowHeight !important; }
+
+		/* The add and settings buttons size themselves from padding and overshoot the same way */
+		.navigation-link-header-group-control {
+			display: inline-flex !important;
+			align-items: center;
+			block-size: @sidebarRowHeight !important;
+			padding-block: 0 !important;
+		}
+
+		.navigation-list li.navigation-item { margin-block-end: @sidebarRowGap !important; }
+
+		.navigation-list > li.navigation-link-header-group {
+			margin-block-start: @sidebarGroupGap !important;
+		}
+	}
+
+	/* Remove the More and Less button */
+	& when (@removeMoreToggle = 1) {
+		.navigation-list > div:has([data-shortcut-target='toggle-more-items']) {
+			display: none !important;
+		}
+
+		/* Undoes the class a collapsed sidebar puts on those folders. Proton also remembers
+		   the open state, so this only matters if it ever comes back collapsed. */
+		.navigation-list > div:has([data-shortcut-target='toggle-more-items']) ~ div[role='presentation'] {
+			display: block !important;
+		}
+	}
+
+	/* Hide those folders instead */
+	& when (@removeMoreToggle = 1) and (@hideMoreFolders = 1) {
+		/* The row rather than its wrapper, so this never argues with the rule above */
+		.navigation-list > div:has([data-shortcut-target='toggle-more-items']) ~ div[role='presentation'] > li {
+			display: none !important;
+		}
+	}
+
+	/* Compact mail list */
+	& when (@compactList = 1) {
+		.is-column .item-container { --item-container-padding-block: @listPadColumn !important; }
+
+		.is-row .item-container { --item-container-padding-block: @listPadRow !important; }
+
+		.item-container { --item-container-padding-inline: @listPadInline !important; }
+
+		/* The round hit area around the box is 2rem, and once the text is this tight it is
+		   the tallest thing in the row. Let it hug the box instead of setting the height. */
+		.item-container .item-icon-compact {
+			inline-size: auto !important;
+			block-size: auto !important;
+			margin-block: 0 !important;
+		}
+
+		.item-container .checkbox-fakecheck {
+			min-inline-size: @checkboxSize !important;
+			inline-size: @checkboxSize !important;
+			block-size: @checkboxSize !important;
+		}
+
+		/* Comfortable puts a sender avatar where compact has the selection box, and at 28px
+		   it is what sets the row height there. The knob caps out at the text line, so the
+		   row can never grow past it. */
+		.item-checkbox-label {
+			display: flex !important;
+			align-items: center !important;
+		}
+
+		/* The avatar is inline, so it stands on a text baseline and drags the descender
+		   space below it into the row. A flex parent above drops the line box entirely. */
+		.item-checkbox-label .item-icon {
+			inline-size: @checkboxSize !important;
+			block-size: @checkboxSize !important;
+
+			/* Proton rounds it by 8px, which is a circle once it is this small */
+			border-radius: 2px !important;
+
+			/* The initials, readable and centred rather than a few pixels in a corner */
+			align-items: center !important;
+			justify-content: center !important;
+			font-size: calc(@checkboxSize * 0.625) !important;
+			line-height: 1 !important;
+		}
+
+		/* A sender picture fills the avatar, wrapper included, so the percentage below has a
+		   definite box to land on. The initials are left out, or they stretch out of the
+		   middle their auto margin puts them in. */
+		.item-checkbox-label .item-icon > *:not(.item-abbr),
+		.item-checkbox-label .item-icon > .item-abbr:has(.item-sender-image),
+		.item-checkbox-label .item-sender-image {
+			inline-size: 100% !important;
+			block-size: 100% !important;
+		}
+
+		/* Proton's grey backs the initials, and a picture covers it. Hover and a tick swap
+		   the picture for a checkmark that needs the grey back, or it goes white on white. */
+		.item-checkbox:not(:hover):not(:checked) + .item-icon:not(:hover):has(.item-sender-image) {
+			background: none !important;
+		}
+
+		/* That checkmark is a fixed 1rem, so it hangs out of a box the knob made smaller */
+		.item-checkbox-label .item-icon-fakecheck svg {
+			inline-size: 100% !important;
+			block-size: 100% !important;
+		}
+
+		/* Both boxes around the picture round themselves by 8px, a circle at this size */
+		.item-checkbox-label .item-icon .item-abbr,
+		.item-checkbox-label .item-sender-image {
+			border-radius: inherit !important;
+		}
+	}
+
+	/* Column mode on one line */
+	& when (@compactList = 1) and (@columnSingleLine = 1) {
+		/* Column mode stacks the sender over the subject inside two wrappers, and comfortable
+		   adds a third line below for the labels. Dissolving all of them hands every part to
+		   one flex row, which is the only place an order can put them in line. */
+		.item-container--column .item-column {
+			flex-direction: row !important;
+			align-items: center !important;
+			gap: 0.75rem;
+			min-inline-size: 0;
+		}
+
+		.item-container--column .item-firstline,
+		.item-container--column .item-column > div:first-child,
+		.item-container--column .item-titlesender > div > .flex-1 {
+			display: contents !important;
+		}
+
+		.item-container--column .item-senders {
+			flex: 0 0 @senderWidth !important;
+			min-inline-size: 0;
+			padding-inline-end: 0 !important;
+			order: 1;
+		}
+
+		.item-container--column .item-secondline {
+			flex: 1 1 auto !important;
+			min-inline-size: 0;
+			order: 2;
+		}
+
+		.item-container--column .item-icons { flex: 0 0 auto; order: 3; }
+
+		/* The labels line, which exists in comfortable only. Picked by the chips it holds,
+		   because an attachment adds a line after it and a last-child would catch that one
+		   instead. Its top margin was the gap to the subject above and is dead weight now. */
+		.item-container--column .item-column > div:not(:first-child):has(> .item-icons),
+		.item-container--column .item-column > div:not(:first-child) > .item-icons {
+			order: 4;
+			margin: 0 !important;
+		}
+
+		/* The attachment line, comfortable's third. It shares the order of the labels, so
+		   the two land in the row in the sequence they have in the page. */
+		.item-container--column .item-column > .attachment-thumbnail-grid {
+			order: 4;
+			margin: 0 !important;
+		}
+
+		.item-container--column .item-firstline-infos {
+			margin-inline-start: auto;
+			order: 5;
+		}
+
+		/* Dissolving the wrappers lifted these into the row as well, where the default order
+		   would park them in front of the sender */
+		.item-container--column .item-hover-action-buttons { order: 6; }
+	}
+
+	/* Attachments as chips */
+	& when (@chipAttachments = 1) {
+		.item-container .attachment-thumbnail-grid {
+			gap: 0.25rem !important;
+			margin: 0 !important;
+		}
+
+		/* Proton's own chip metrics, so an attachment reads as one more label. The height
+		   is the line box a label chip gets from its font size and line height. */
+		.item-container .attachment-thumbnail {
+			min-inline-size: 0 !important;
+			max-inline-size: 10em !important;
+			block-size: 1.64em !important;
+			padding-block: 0 !important;
+			padding-inline: 0.375rem !important;
+			gap: 0.25rem !important;
+			font-size: 0.6875rem !important;
+			border-radius: 2px !important;
+		}
+
+		/* The file type icon is a fixed 1rem and would set the height on its own */
+		.item-container .attachment-thumbnail > svg {
+			inline-size: 1em !important;
+			block-size: 1em !important;
+		}
+
+		/* Padding meant for the taller button */
+		.item-container .attachment-thumbnail-name span span { padding-block: 0 !important; }
+	}
+
+	/* Bold senders */
+	& when (@boldSenders = 1) {
+		.item-container--column .item-senders { font-weight: 600 !important; }
+	}
+
+	/* Accent the folder icons */
+	& when (@accentLocationIcons = 1) {
+		/* --primary is set per theme, so this follows whichever one is picked. Falling back
+		   to the inherited colour leaves a theme that does not define it untouched. */
+		[data-testid^='item-location-'] {
+			color: var(--primary, currentColor) !important;
+			opacity: @locationIconOpacity !important;
+		}
+
+		/* A selected row is painted in the accent itself, so the icon would vanish into it */
+		.item-is-selected [data-testid^='item-location-'] {
+			color: inherit !important;
+			opacity: 1 !important;
+		}
+	}
+
+	/* Accented conversation count */
+	& when (@conversationCount = 1) {
+		/* The bracketed number, and the only aria-hidden span in a subject. Row mode nests
+		   the pair one level deeper, inside the heading. */
+		.item-subject span[aria-hidden='true']:has(+ .sr-only) {
+			display: inline-block !important;
+			font-size: @countFontSize !important;
+			font-weight: 700 !important;
+			line-height: 1.4 !important;
+			color: var(--primary, currentColor) !important;
+
+			/* Number and brackets share one text node, so the brackets can only be cut off.
+			   They sit at either end, one bracket wide, and the margins take that space back
+			   and add the gap. The box keeps hugging the number, so 100 is wider than 4. */
+			clip-path: inset(-0.5em 0.355em) !important;
+			margin-inline: calc(@countGap - 0.355em) !important;
+		}
+
+		/* Row mode spaces the location icon itself, which would stack onto the gap */
+		.item-subject :has(+ span[aria-hidden='true'] + .sr-only) {
+			margin-inline-end: 0 !important;
+		}
+
+		/* A selected row is painted in the accent itself, so the number would vanish into it */
+		.item-is-selected .item-subject span[aria-hidden='true']:has(+ .sr-only) {
+			color: inherit !important;
+		}
+	}
+
+	/* Steady hover buttons */
+	& when (@hoverActions = 1) {
+		/* With no height of its own the row cannot grow when the buttons appear. They still
+		   claim their width, so nothing ends up hidden underneath them. Proton offsets them
+		   downwards from a relative position, which static drops along with the offset. */
+		.item-hover-action-buttons {
+			position: static !important;
+			block-size: 0 !important;
+			align-items: center !important;
+			margin-block: 0 !important;
+		}
+
+		/* No !important on display, or this would also bring back a button that another
+		   tweak has switched off, the star being the one that does */
+		.item-hover-action-buttons .button {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			inline-size: @hoverButtonSize !important;
+			block-size: @hoverButtonSize !important;
+			padding: 0 !important;
+		}
+
+		/* The icon is a fixed 1rem, which looks lost once the button grows around it */
+		.item-hover-action-buttons .button > svg {
+			inline-size: 55% !important;
+			block-size: 55% !important;
+		}
+	}
+
+	/* Taller Label as and Move to dialogs */
+	& when (@labelDialogHeight = 1) {
+		/* Proton's script writes the height as an inline style, so specificity alone loses here.
+		   Its companion --available-height is measured once on open and goes stale on resize,
+		   so cap against the room below the dialog instead. */
+		.label-dropdown .dropdown-content,
+		.move-dropdown .dropdown-content {
+			block-size: @labelDialogSize !important;
+			max-block-size: calc(100vh - var(--top, 0px) - 0.5rem) !important;
+		}
+
+		/* The real limit. Without this the dialog grows and the list keeps its few rows */
+		.label-dropdown .label-dropdown-list,
+		.move-dropdown .move-dropdown-list { max-block-size: none !important; }
+	}
+
+	/* Compact dialog rows */
+	& when (@labelDialogHeight = 1) and (@labelDialogCompact = 1) {
+		.label-dropdown .dropdown-item,
+		.move-dropdown .dropdown-item { padding-block: @labelRowPad !important; }
+
+		/* The stack of 1rem margins around search, buttons and footer costs more rows
+		   than the row padding does */
+		.label-dropdown .dropdown-content form > *,
+		.move-dropdown .dropdown-content form > * {
+			margin-block: @labelChromeGap !important;
+		}
+	}
+}

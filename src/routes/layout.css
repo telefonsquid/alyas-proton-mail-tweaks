@@ -1,0 +1,68 @@
+/* Page wide tokens and reset. The picker paints itself in its own component styles, so
+   nothing here can reach into the preview and repaint Proton's markup. */
+
+/* Inter is what Proton ships. Self hosted, so the page asks no third party for it. */
+@font-face {
+	font-family: 'Inter';
+	font-style: normal;
+	font-weight: 100 900;
+	font-display: swap;
+	src: url('../lib/assets/inter-latin.woff2') format('woff2');
+}
+
+:root {
+	--ui-font: 'Inter', system-ui, sans-serif;
+
+	/* Proton's light side, lifted from the scrape */
+	--ui-bg: #f8f8f6;
+	--ui-surface: #fff;
+	--ui-text: #0c0c14;
+	--ui-text-weak: #5c5958;
+	--ui-border: #eae7e4;
+	--ui-border-strong: #d1cfcd;
+	--ui-hover: rgb(194 193 192 / 20%);
+	--ui-accent: #6d4aff;
+	--ui-accent-hover: #6243e6;
+
+	/* And its prominent side, the dark panel the sidebar sits in */
+	--ui-panel: #1b1340;
+	--ui-panel-text: #fff;
+	--ui-panel-weak: #b3a3f5;
+	--ui-panel-hover: rgb(74 54 143 / 30%);
+	--ui-panel-active: rgb(74 57 143 / 50%);
+	--ui-panel-border: #413085;
+	--ui-panel-accent: #8a6eff;
+
+	/* Proton's --border-radius-md and -sm at its default setting of 8 */
+	--ui-radius: 0.5rem;
+	--ui-radius-sm: 0.25rem;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	block-size: 100%;
+}
+
+body {
+	font: 400 15px/1.45 var(--ui-font);
+	color: var(--ui-text);
+	background: var(--ui-bg);
+}
+
+button,
+input,
+select {
+	font: inherit;
+	color: inherit;
+}
+
+code,
+pre {
+	font-family: ui-monospace, monospace;
+	font-size: 0.8125rem;
+}
