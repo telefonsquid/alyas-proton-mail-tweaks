@@ -46,6 +46,8 @@
 }
 
 /* Utilities Proton ships under these same names */
+/* Ahead of .flex, which wins over it in Proton's own sheet */
+.mock .inline-block { display: inline-block; }
 .mock .flex { display: flex; }
 .mock .flex-column { flex-direction: column; }
 .mock .flex-row { flex-direction: row; }
@@ -72,14 +74,17 @@
 .mock .mt-4 { margin-block-start: 1rem; }
 .mock .ml-1 { margin-inline-start: 0.25rem; }
 .mock .ml-2 { margin-inline-start: 0.5rem; }
+.mock .mr-1 { margin-inline-end: 0.25rem; }
 .mock .mr-3 { margin-inline-end: 0.75rem; }
 .mock .px-3 { padding-inline: 0.75rem; }
 .mock .px-4 { padding-inline: 1rem; }
+.mock .py-0\.5 { padding-block: 0.125rem; }
 .mock .py-2 { padding-block: 0.5rem; }
 .mock .rounded-sm { border-radius: var(--radius-sm); }
 .mock .rounded { border-radius: 0.5rem; }
 .mock .mt-1 { margin-block-start: 0.25rem; }
 .mock .overflow-hidden { overflow: hidden; }
+.mock .align-bottom { vertical-align: bottom; }
 .mock .text-sm { font-size: 0.875rem; }
 .mock .text-bold { font-weight: 700; }
 .mock .color-weak { color: var(--weak); }

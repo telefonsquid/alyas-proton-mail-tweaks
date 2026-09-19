@@ -1,79 +1,69 @@
-# Alya's Proton Mail Tweaks
+<div align="center">
 
-A set of CSS tweaks that make Proton Mail's web UI denser and drop the parts you do not
-use, plus a small page to pick the ones you want.
+<img src="docs/header.svg" alt="Alya's Proton Mail Tweaks" width="620">
 
-Roughly what it buys you, measured at 1600x900 with everything switched on:
+A set of CSS tweaks that make Proton Mail's web UI denser, prettier and drop the parts you never use.
 
-| | before | after |
-| --- | --- | --- |
-| Sidebar rows | 41 | 7 |
-| Mail rows on one screen, column mode | 13 | 26 |
-| Mail row height, column / row | 58px / 46px | 30px / 28px |
-| Labels visible in "Label as" | 5 of 25 | 12 of 25 |
+### [Configure & Install](https://proton-mail-tweaks.henkys.dev)
 
-## Install
+<img src="https://img.shields.io/badge/Proton%20Mail-5.0.132.2%2B-FF41DD?style=flat-square" alt="Proton Mail 5.0.132.2+">
+<img src="https://img.shields.io/badge/format-UserCSS-FF41DD?style=flat-square" alt="UserCSS">
+<img src="https://img.shields.io/badge/license-MIT-FF41DD?style=flat-square" alt="MIT license">
 
-The tweaks ship as a [UserCSS](https://github.com/openstyles/stylus/wiki/UserCSS) style for
-[Stylus](https://add0n.com/stylus.html).
+</div>
 
-1. Install Stylus for [Firefox](https://addons.mozilla.org/firefox/addon/styl-us/) or
-   [Chrome](https://chromewebstore.google.com/detail/stylus/clngdbkpkpeebahjckkjfobafhncgmne).
-2. Open the picker, tick what you want, dial the sliders, and press **Install in Stylus**.
-3. Every tweak and every slider stays adjustable afterwards in Stylus' own settings panel,
-   so you never have to come back to the page to change your mind.
+<br>
 
-Stylus installs from a link and only from a link. Pasting the code into a new style leaves
-it in Stylus' plain mode, where none of the switches work, and a downloaded file needs
-"Allow access to file URLs" turned on first. Use the button.
+## How to use
 
-## What is in it
+1. **Install [Stylus](https://add0n.com/stylus.html)** for
+   [Firefox](https://addons.mozilla.org/firefox/addon/styl-us/) or
+   [Chrome](https://chromewebstore.google.com/detail/stylus/clngdbkpkpeebahjckkjfobafhncgmne),
+   or any other extension that can apply custom user CSS.
+2. **Configure it to your liking** on
+   [proton-mail-tweaks.henkys.dev](https://proton-mail-tweaks.henkys.dev). It comes with reasonable defaults for the layout, you have to choose yourself which features you want to hide.
+3. **Press Install in Stylus.** Every switch and every slider stays adjustable afterwards in Stylus' own settings panel.
 
-| Tweak | Does |
+## Features
+
+- **Compact sidebar** - configurable row height & row gaps
+- **Compact mail list** - configurable padding & selection box size | column mode on a single line
+- **Remove Starred** - removes starred feature entirely
+- **Remove Views, Folders, Labels** - each sidebar section on its own switch, optionally everywhere else too
+- **Remove More/Less Sidebar button** - optionally hides the folders behind it as well
+- **Taller "Label as" and "Move to" dialogs** - actually see more than 5 items
+- **Bold senders** - sets the sender apart from the subject in column mode
+- **Accent the folder icons** - Archive and Sent markers in the theme accent color
+- **Restyle conversation count** - bold & accent color
+- **Steady hover buttons** - stops the row growing as the pointer passes
+- **Attachments as chips** - shrinks comfortable density's attachment buttons to label chips
+
+Every tweak can be switched individually, some are slider-configurable.
+
+## Compatibility
+
+| Version | Compability |
 | --- | --- |
-| Remove everything Starred | The star on every row, in an open mail, and the sidebar entry |
-| Remove Views, Folders, Labels | Each sidebar section on its own switch, optionally everywhere else too |
-| Compact sidebar | Row height, gap between rows, gap above a section |
-| Remove the More and Less button | Optionally hides the folders behind it as well |
-| Compact mail list | Padding per mode, selection box size, and column mode on one line |
-| Bold senders | Sets the sender apart from the subject in column mode |
-| Accent the folder icons | Archive and Sent markers in the theme accent |
-| Accent the conversation count | `[2]` becomes the bare number, bold and in the accent |
-| Steady hover buttons | Stops the row growing as the pointer passes |
-| Attachments as chips | Shrinks comfortable density's attachment buttons to label chips |
-| Taller "Label as" dialog | More rows in "Label as" and "Move to", which share one defect |
+| 5.0.132.2 | ✅ |
+| Pre 5.0.132.2 | ❌ |
 
-## Running the picker
+| Style | Compability |
+| --- | --- |
+| Column mode | ✅ |
+| Row mode | ✅ |
+| Compact density | ✅ |
+| Comfortable density | ✅ |
+| Themes | ✅ |
 
-```bash
-bun install
-bun run dev
-```
+I use Proton Mail every day and could not live without these tweaks. So my incentive to keep this up-to-date being my own autistic need for compact user interfaces is as good as a promise you can get. If something doesn't work, feel free to [open an issue](https://github.com/telefonsquid/alyas-proton-mail-tweaks/issues).
 
-`bun run build:usercss` writes the all-on stylesheet to
-`static/proton-mail-tweaks.user.css`.
+## AI disclaimer
 
-The preview is a hand built mock that reuses Proton's class names with approximating CSS
-of our own. It ships none of Proton's code, and a selector proven against it lands in the
-app unchanged.
-
-## The scrapes
-
-`proton-mail-scrapes/` holds saved Proton Mail pages used as selector reference. They are
-anonymized before they are committed: addresses, display names, subjects, folder and label
-names and opaque IDs are all replaced, and the vendor JavaScript is pruned.
-
-```bash
-node tools/anonymize.mjs
-```
-
-Placeholders come from a hash of the original value, so the same address maps to the same
-placeholder in a scrape added months later. No mapping table is kept anywhere.
+The first set of these tweaks were hand written, by me, for me. But maintaining that every time an update changes something slighly would be more hassle than the tweaks are worth, so upkeep is now handled by Claude. The configurator and adjustable Stylus variables were also built with Claude.
 
 ## Not affiliated with Proton
 
-Proton and Proton Mail are trademarks of Proton AG. This is an unofficial third party
-stylesheet, made by a user, with no involvement from or endorsement by Proton.
+Proton and Proton Mail are trademarks of Proton AG. This is an unofficial third party stylesheet, made by a user, with no involvement from or endorsement by Proton.
 
 ## License
 

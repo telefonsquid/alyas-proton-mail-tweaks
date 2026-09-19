@@ -42,11 +42,16 @@ Two deliverables:
 | Anonymization depth | Full scrub | Addresses, display names, subjects, label names and opaque IDs all replaced. |
 | Styling of the picker | Plain CSS | See Hard constraints. |
 | Distribution format | UserCSS, `@preprocessor less` | Every tweak becomes an `@var checkbox` and every density value an `@var range`, so they stay switchable inside Stylus' own settings panel after install. No revisiting the page to change your mind. |
+| Which tweaks start ticked | Everything that only tightens the UI. Every tweak that takes a feature away starts off | Density is a safe default; removing Views, Folders, Labels or Starred is not, because a visitor who lands on the picker should not have to notice that a part of their sidebar went missing. `removeMoreToggle` stays on: it hides a toggle, not the folders behind it. |
+| Header of the installed file | A banner comment holding a short version of the README, plus `@author`, `@homepageURL`, `@supportURL` and `@license` in the metadata | The `.user.css` travels on its own once installed. Whoever opens it months later gets the tagline, both links, the supported version, the AI note and the Proton disclaimer without going looking. Both URLs live in `REPO_URL` and `PICKER_URL` in `generate.ts`. |
 | Density control | Range sliders | Row height, list padding and dialog height each get an `<input type=range>`, live in the preview. |
 | Look of the picker | Proton's own | The left bar is painted in Proton's prominent theme and the controls follow its metrics, so the page reads as an extension of the app it tweaks. |
 | Font | Inter, self hosted | What Proton ships. The latin subset sits in `src/lib/assets`, so a published page asks no third party for it. |
 | Favicon | Proton's mail mark, hue rotated 55 degrees | Recognisably the same shape, unmistakably not Proton's tab. |
 | Stylus logo | Vendored from the Stylus repo | `src/lib/assets/stylus.png`. Upstream ships no SVG, only the PNG icon set. |
+| README scope | Header, one sentence, the link, How to use, Features, Compatibility, a note on AI | It sells the thing and points at the picker. No build instructions, no scrapes section, nothing a visitor has to read past. |
+| Stated compatibility | A table: 5.0.132.2 and newer yes, anything older no, both modes, both densities, every theme | The version the scrapes and every measurement come from. Older builds are untested, so they get a plain no rather than a maybe. Maintained actively, because Alya runs these tweaks daily, and the section points at the issue tracker. |
+| AI disclosure | Stated in the README, under "A note on AI" | The first tweaks were hand written; Claude keeps them current, because a selector that moves on every Proton update is more upkeep than a CSS tweak is worth by hand. Said plainly rather than left to be discovered. |
 | License | MIT, copyright "Alya" | A public repo without one is all rights reserved. The handle stands in for a real name on purpose. |
 
 The picker therefore emits a **ready configured `.user.css`**: the blocks you ticked and
@@ -54,6 +59,9 @@ the numbers you dialed become the `@var` defaults. Fine tuning afterwards happen
 Stylus, not on the page.
 
 ## Installing
+
+The picker is hosted at **proton-mail-tweaks.henkys.dev**, which is the address the README
+sends everyone to.
 
 Stylus takes a UserCSS from a **link** ending in `.user.css`, and only from there. The two
 obvious routes both fail:
@@ -131,7 +139,7 @@ Status: `todo` / `wip` / `done`.
 
 | # | Tweak | Options | Status |
 | --- | --- | --- | --- |
-| 1 | Remove everything Starred | list star button, open mail, sidebar entry | done |
+| 1 | Remove Starred | list star button, open mail, sidebar entry | done |
 | 2 | Remove Views from the sidebar | — | done |
 | 3 | Remove Folders from the sidebar | plus: remove folders everywhere else | done |
 | 4 | Remove Labels from the sidebar | plus: remove labels everywhere else | done |
@@ -182,6 +190,7 @@ too, once its attachment sits in the row as a chip.
 | `scripts/build-usercss.ts` | `bun run build:usercss` → `static/proton-mail-tweaks.user.css` |
 | `scripts/serve-scrapes.ts` | `bun scripts/serve-scrapes.ts` → the scrapes on `localhost:4321` |
 | `tools/anonymize.mjs` | Scrubs a newly added scrape |
+| `docs/header.svg` | The README's header lockup: the magenta mark over a gradient wordmark |
 
 A tweak is written **once**, as a function of a `Resolve`. The preview asks it for literal
 lengths, the UserCSS build asks it for LESS variables. Never write the rules twice.
@@ -196,6 +205,10 @@ things made the preview show more room around the conversation count than the ap
 of a row mode subject, each of which renders as a real space. Keep those tags tight. The mock
 carries Proton's hover and checked swap on the comfortable avatar for the same reason: a state
 the preview cannot reach is a state nobody checks a tweak against.
+
+A utility class the mock's markup uses but `proton.css` never defines does nothing, silently,
+and the preview then shows a gap the app has. `mr-1` was missing that way for a while. Diff the
+classes used against the ones defined after touching either.
 
 The mock shares a page with the picker, so anything global reaches it. That is why the
 picker paints itself in the component styles of `+page.svelte`, which Svelte scopes, and
@@ -267,6 +280,13 @@ modes. Padding runs through `--item-container-padding-block` and
 subject `.item-subject`, star `.item-star`, label chips `.label-stack`, folder location
 icon `[data-testid^='item-location-']`.
 
+**The folder marker on a row.** It is never a bare span. Proton nests it one level in both
+modes, and the icon itself carries `py-0.5 mr-1`, which pads its 16px box out to the 20px
+text line and holds the subject off it. Column wraps it in `flex shrink-0`; row wraps it in
+`inline-flex shrink-0 align-bottom mr-1`, and that `align-bottom` is what stops the icon
+standing on the text baseline, two pixels high. Row nests the whole subject one level deeper
+again, in a `div.flex.flex-column.inline-block` where `.flex` wins.
+
 **Hover actions on a list row.** Every row carries a hidden
 `.item-hover-action-buttons` holding mark unread, trash, archive and, in column mode only,
 star. On hover Proton shows them *and* hides what was in that space:
@@ -328,12 +348,12 @@ fallback, at every size the knob offers: below 0.333em a bracket survives, above
 outer digit loses ink. Remeasure before touching it. The number is then bold and in the
 accent, and takes `color: inherit` back on a selected row like every other accented part.
 
-Both sides, because the two modes are spaced differently in Proton itself: the location icon
-carries `mr-1` in row mode and nothing in column. A count that reclaimed its left bracket and
-nothing more therefore sat flush against the icon in column mode and 4px off the subject,
-which reads as far too much room on the right. So the rule also zeroes the trailing margin of
-whatever sits right before the count, `:has(+ span[aria-hidden='true'] + .sr-only)`, and both
-modes come out at the gap on either side.
+Both sides, because a count that reclaimed its left bracket and nothing more sat 4px further
+off the subject than off what precedes it, which reads as far too much room on the right. So
+the rule also zeroes the trailing margin of whatever sits right before the count,
+`:has(+ span[aria-hidden='true'] + .sr-only)`. That is the wrapper around the folder marker,
+not the marker itself, whose own `mr-1` survives, so the count lands at the gap on the right
+and the gap plus 4px on the left, in both modes.
 
 Dropped for it: un-hiding the screen reader twin in a box too narrow for the word after the
 number, so the line broke right there and one line of height hid the rest. It worked, but

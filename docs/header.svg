@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="224" viewBox="0 0 720 224" fill="none" role="img" aria-label="Alya's Proton Mail Tweaks">
+  <svg x="312" y="4" width="96" height="96" viewBox="18 19 92 92" fill="none">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M75.8803 54.2772L75.8851 54.2811L51.4286 81.4286L20 46.8348V31.9126C20 30.199 21.9972 29.2615 23.3154 30.3563L58.184 59.3133C61.5558 62.1134 66.4442 62.1134 69.816 59.3133L75.8803 54.2772Z" fill="url(#mark0)"/>
+    <path d="M89.1429 43.2632L75.8803 54.2772L75.8851 54.2812L58.3249 69.7928C55.3336 72.4351 50.8623 72.5017 47.7936 69.9496L20 46.8349V91.1824C20 96.2101 24.0758 99.9999 29.1035 99.9999L89.1429 99.9999L95.4286 71.7745L89.1429 43.2632Z" fill="url(#mark1)"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M89.1428 43.2743V100L98.8965 100C103.924 100 108 95.9239 108 90.8966V31.9127C108 30.1991 106.003 29.2614 104.684 30.3564L89.1428 43.2743Z" fill="url(#mark2)"/>
+  </svg>
+
+  <text x="360" y="178" text-anchor="middle" fill="url(#wordmark)"
+        font-family="Inter, 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif"
+        font-size="54" font-weight="700" letter-spacing="-1.2">Alya&#8217;s Proton Mail Tweaks</text>
+
+  <rect x="312" y="210" width="96" height="4" rx="2" fill="url(#rule)"/>
+
+  <defs>
+    <linearGradient id="mark0" x1="53.0221" y1="81.9071" x2="23.5083" y2="-20.6184" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD9F8"/>
+      <stop offset="1" stop-color="#FF41DD"/>
+    </linearGradient>
+    <radialGradient id="mark1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(95.1 50.2083) scale(87.9628 82.4961)">
+      <stop offset="0.5561" stop-color="#FF4AEB"/>
+      <stop offset="0.9944" stop-color="#FF8EEC"/>
+    </radialGradient>
+    <linearGradient id="mark2" x1="136.459" y1="145.456" x2="69.0248" y2="-0.606416" gradientUnits="userSpaceOnUse">
+      <stop offset="0.271" stop-color="#FFD9F8"/>
+      <stop offset="1" stop-color="#FF41DD"/>
+    </linearGradient>
+    <linearGradient id="wordmark" x1="40" y1="0" x2="680" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF8EEC"/>
+      <stop offset="0.5" stop-color="#FF41DD"/>
+      <stop offset="1" stop-color="#FF8EEC"/>
+    </linearGradient>
+    <linearGradient id="rule" x1="312" y1="0" x2="408" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF8EEC"/>
+      <stop offset="1" stop-color="#FF41DD"/>
+    </linearGradient>
+  </defs>
+</svg>

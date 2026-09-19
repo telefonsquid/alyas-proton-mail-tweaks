@@ -5,6 +5,8 @@ export const STYLE_NAME = "Alya's Proton Mail Tweaks";
 export const STYLE_NAMESPACE = 'proton-mail-css-tweaks';
 export const STYLE_VERSION = '1.0.0';
 export const TARGET_DOMAIN = 'mail.proton.me';
+export const REPO_URL = 'https://github.com/telefonsquid/alyas-proton-mail-tweaks';
+export const PICKER_URL = 'https://proton-mail-tweaks.henkys.dev';
 
 export type Selection = {
 	enabled: Record<string, boolean>;
@@ -127,6 +129,10 @@ function metadata(selection: Selection): string {
 		`@namespace      ${STYLE_NAMESPACE}`,
 		`@version        ${STYLE_VERSION}`,
 		`@description    Makes Proton Mail's web UI denser and drops the parts you do not use.`,
+		`@author         TelefonSquid`,
+		`@homepageURL    ${PICKER_URL}`,
+		`@supportURL     ${REPO_URL}/issues`,
+		`@license        MIT`,
 		`@preprocessor   less`,
 		''
 	];
@@ -143,6 +149,35 @@ function metadata(selection: Selection): string {
 	}
 
 	return lines.join('\n');
+}
+
+// The README in short, for anyone who reads the installed file rather than the page
+function banner(): string {
+	return [
+		'/*',
+		` * ${STYLE_NAME}`,
+		' *',
+		" * A set of CSS tweaks that make Proton Mail's web UI denser, prettier and drop the",
+		' * parts you never use.',
+		' *',
+		` * Configure and install   ${PICKER_URL}`,
+		` * Source and issues       ${REPO_URL}`,
+		' *',
+		' * Every tweak below is an independent switch and most carry a slider. Both stay',
+		" * adjustable in Stylus' own settings panel, so you never have to come back to the page.",
+		' *',
+		' * Built for Proton Mail 5.0.132.2 and newer, column and row mode, compact and',
+		' * comfortable density, every theme. Older versions are untested. If something does not',
+		' * work, open an issue with a screenshot and your Proton Mail version.',
+		' *',
+		' * The first of these tweaks were hand written. Upkeep is handled by Claude, because a',
+		' * selector that moves on every Proton update is more hassle than a CSS tweak is worth',
+		' * to chase by hand.',
+		' *',
+		' * Not affiliated with Proton. Proton and Proton Mail are trademarks of Proton AG.',
+		' * MIT licensed.',
+		' */'
+	].join('\n');
 }
 
 // What you install: every tweak ships, each behind its own switch in Stylus' settings panel
@@ -163,6 +198,8 @@ export function userCss(selection: Selection): string {
 		'/* ==UserStyle==',
 		metadata(selection),
 		'==/UserStyle== */',
+		'',
+		banner(),
 		'',
 		`@-moz-document domain("${TARGET_DOMAIN}") {`,
 		blocks.join('\n\n'),

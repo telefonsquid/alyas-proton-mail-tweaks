@@ -85,9 +85,16 @@
 
 								<div class="flex flex-nowrap items-center item-secondline max-w-full">
 									<div class="item-subject flex-1 flex flex-nowrap items-center">
-										<span class="flex shrink-0" data-testid="item-location-{mail.location}">
-											<Icon name={mail.location === 'Archive' ? 'archive' : 'inbox'} />
-											<span class="sr-only">{mail.location}</span>
+										<!-- The marker sits in a wrapper of its own and pads itself to the text line,
+										     which is what keeps it centred against the subject -->
+										<span class="flex shrink-0">
+											<span
+												class="flex shrink-0 py-0.5 mr-1"
+												data-testid="item-location-{mail.location}"
+											>
+												<Icon name={mail.location === 'Archive' ? 'archive' : 'inbox'} />
+												<span class="sr-only">{mail.location}</span>
+											</span>
 										</span>
 										{#if mail.count}
 											<span class="mr-1 shrink-0" aria-hidden="true">[{mail.count}]</span>
@@ -96,7 +103,7 @@
 										<span
 											role="heading"
 											aria-level="2"
-											class="max-w-full text-ellipsis"
+											class="inline-block max-w-full mr-1 text-ellipsis"
 											data-testid="message-column:subject">{mail.subject}</span
 										>
 									</div>
@@ -185,19 +192,27 @@
 							<!-- Tags sit tight against each other. This is an inline row, so a line break between
 							     them would render as a space that Proton does not have. -->
 							<div class="item-subject flex items-center flex-nowrap">
-								<span
-									role="heading"
-									aria-level="2"
-									class="max-w-full text-ellipsis"
-									data-testid="message-row:subject"
-									><span class="inline-flex shrink-0 mr-1" data-testid="item-location-{mail.location}"
-										><Icon name={mail.location === 'Archive' ? 'archive' : 'inbox'} /><span class="sr-only"
-											>{mail.location}</span
-										></span
-									>{#if mail.count}<span class="shrink-0 mr-1" aria-hidden="true">[{mail.count}]</span><span
-										class="sr-only">{mail.count} messages in conversation</span
-									>{/if}<span>{mail.subject}</span></span
-								>
+								<div class="flex flex-column inline-block">
+									<span
+										role="heading"
+										aria-level="2"
+										class="max-w-full text-ellipsis"
+										data-testid="message-row:subject"
+										><!-- The marker stands on the text baseline unless its wrapper is pulled down to
+										     the bottom of the line box, and the inner padding fills that box out
+										--><span class="inline-flex shrink-0 align-bottom mr-1"
+											><span
+												class="flex shrink-0 py-0.5 mr-1"
+												data-testid="item-location-{mail.location}"
+												><Icon name={mail.location === 'Archive' ? 'archive' : 'inbox'} /><span
+													class="sr-only">{mail.location}</span
+												></span
+											></span
+										>{#if mail.count}<span class="shrink-0 mr-1" aria-hidden="true">[{mail.count}]</span><span
+											class="sr-only">{mail.count} messages in conversation</span
+										>{/if}<span>{mail.subject}</span></span
+									>
+								</div>
 							</div>
 
 							<span class="flex flex-nowrap items-center shrink-0 justify-end">

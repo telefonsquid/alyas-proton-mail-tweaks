@@ -3,11 +3,15 @@
 @namespace      proton-mail-css-tweaks
 @version        1.0.0
 @description    Makes Proton Mail's web UI denser and drops the parts you do not use.
+@author         TelefonSquid
+@homepageURL    https://proton-mail-tweaks.henkys.dev
+@supportURL     https://github.com/telefonsquid/alyas-proton-mail-tweaks/issues
+@license        MIT
 @preprocessor   less
 
-@var checkbox removeStarred "Remove everything Starred" 1
-@var checkbox hideViews "Remove Views" 1
-@var checkbox hideFolders "Remove Folders" 1
+@var checkbox removeStarred "Remove Starred" 0
+@var checkbox hideViews "Remove Views" 0
+@var checkbox hideFolders "Remove Folders" 0
 @var checkbox hideFoldersEverywhere "Remove folders everywhere else" 0
 @var checkbox hideLabels "Remove Labels" 0
 @var checkbox hideLabelsEverywhere "Remove labels everywhere else" 0
@@ -40,8 +44,32 @@
 @var range labelChromeGap "Dialogs: Space around the buttons" [6, 0, 16, 1, "px"]
 ==/UserStyle== */
 
+/*
+ * Alya's Proton Mail Tweaks
+ *
+ * A set of CSS tweaks that make Proton Mail's web UI denser, prettier and drop the
+ * parts you never use.
+ *
+ * Configure and install   https://proton-mail-tweaks.henkys.dev
+ * Source and issues       https://github.com/telefonsquid/alyas-proton-mail-tweaks
+ *
+ * Every tweak below is an independent switch and most carry a slider. Both stay
+ * adjustable in Stylus' own settings panel, so you never have to come back to the page.
+ *
+ * Built for Proton Mail 5.0.132.2 and newer, column and row mode, compact and
+ * comfortable density, every theme. Older versions are untested. If something does not
+ * work, open an issue with a screenshot and your Proton Mail version.
+ *
+ * The first of these tweaks were hand written. Upkeep is handled by Claude, because a
+ * selector that moves on every Proton update is more hassle than a CSS tweak is worth
+ * to chase by hand.
+ *
+ * Not affiliated with Proton. Proton and Proton Mail are trademarks of Proton AG.
+ * MIT licensed.
+ */
+
 @-moz-document domain("mail.proton.me") {
-	/* Remove everything Starred */
+	/* Remove Starred */
 	& when (@removeStarred = 1) {
 		[data-testid='sidebar-label:Starred'] { display: none !important; }
 

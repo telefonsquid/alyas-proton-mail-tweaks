@@ -8,9 +8,9 @@ const header = (section: 'views' | 'folders' | 'labels') =>
 export const TWEAKS: Tweak[] = [
 	{
 		id: 'removeStarred',
-		title: 'Remove everything Starred',
+		title: 'Remove Starred',
 		group: 'Starred',
-		enabled: true,
+		enabled: false,
 		css: () => `
 			[data-testid='sidebar-label:Starred'] { display: none !important; }
 
@@ -28,7 +28,7 @@ export const TWEAKS: Tweak[] = [
 		id: 'hideViews',
 		title: 'Remove Views',
 		group: 'Sidebar',
-		enabled: true,
+		enabled: false,
 		css: () => `
 			${header('views')},
 			${header('views')} + div { display: none !important; }
@@ -39,7 +39,7 @@ export const TWEAKS: Tweak[] = [
 		id: 'hideFolders',
 		title: 'Remove Folders',
 		group: 'Sidebar',
-		enabled: true,
+		enabled: false,
 		css: () => `
 			${header('folders')},
 			${header('folders')} + div { display: none !important; }
