@@ -47,9 +47,9 @@ Every tweak can be switched individually, some are slider-configurable.
 
 ## Compatibility
 
-| Version | Compability |
+| Proton Mail Version | Tweaks Version |
 | --- | --- |
-| 5.0.132.2 | ✅ |
+| 5.0.132.2 | ✅ v1.0.0 |
 | Pre 5.0.132.2 | ❌ |
 
 | Style | Compability |
