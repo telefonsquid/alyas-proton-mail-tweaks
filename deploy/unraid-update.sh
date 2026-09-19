@@ -7,7 +7,7 @@ REPO_DIR="/mnt/user/appdata/proton-mail-tweaks"
 LOG_FILE="$REPO_DIR/deploy.log"
 IMAGE="proton-mail-tweaks"
 CONTAINER="proton-mail-tweaks"
-PORT="9030"
+PORT="9930"
 ORIGIN="https://proton-mail-tweaks.henkys.dev"
 
 git config --global --add safe.directory $REPO_DIR
