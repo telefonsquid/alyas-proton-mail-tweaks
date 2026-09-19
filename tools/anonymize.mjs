@@ -55,6 +55,10 @@ const SYSTEM_LABELS = new Set([
 // Display name of a list entry: the first text that follows the sender marker
 const SENDER_NAME = /(data-testid="message-(?:column|row):sender-address">(?:<[^>]*>)*)([^<]+)/g;
 
+// A sender that is a service rather than a person, kept so the list still reads as the real thing.
+// Proton is here for a scrape edited by hand, the rest of its rows are caught by their address.
+const KEEP_SENDERS = new Set(['GitHub', 'Proton']);
+
 // Folders and labels are named in three places, and a collapsed sidebar carries none of them
 const LABEL_SOURCES = [
 	/data-testid="sidebar-label:([^"]*)"/g,
@@ -64,6 +68,12 @@ const LABEL_SOURCES = [
 
 // The leading guard keeps a percent encoded path from being read as one long local part
 const EMAIL = /(?<![A-Za-z0-9._%+-])[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
+
+// An address this script already wrote. Skipping it keeps the promise that a sender maps to the
+// same placeholder months later, which a second run would otherwise break.
+const PLACEHOLDERS = new Set(PERSON_NAMES.map((name) => name.toLowerCase().replace(' ', '.')));
+const isPlaceholder = (local, host) =>
+	FAKE_HOSTS.includes(host) && PLACEHOLDERS.has(local.replace(/\d+$/, ''));
 
 const digest = (value) => crypto.createHash('sha1').update(value).digest();
 const pick = (value, salt, list) => list[digest(salt + value).readUInt32BE(0) % list.length];
@@ -152,7 +162,7 @@ function buildMaps(text, styles) {
 		const address = raw.toLowerCase();
 		if (emails.has(address)) continue;
 		const [local, host] = address.split('@');
-		if (KEEP_HOST.test(host)) continue;
+		if (KEEP_HOST.test(host) || isPlaceholder(local, host)) continue;
 
 		const person = pick(address, 'person', PERSON_NAMES);
 		const [first, last] = person.toLowerCase().split(' ');
@@ -172,7 +182,7 @@ function buildMaps(text, styles) {
 
 	for (const match of text.matchAll(SENDER_NAME)) {
 		const name = match[2].trim();
-		if (!name || senders.has(name)) continue;
+		if (!name || senders.has(name) || KEEP_SENDERS.has(name)) continue;
 		senders.set(name, pick(name, 'sender', PERSON_NAMES));
 	}
 
@@ -205,18 +215,65 @@ function buildMaps(text, styles) {
 	return { emails, hosts, nameTokens, senders, subjects, labels, ids };
 }
 
+// Proton spells the sender out in the saved page, so a row's initials are a real person's, and
+// its picture is pruned along with the other assets and leaves an empty box behind. The address
+// decides who the row is instead, which keeps two senders from collapsing into one name, and the
+// initials follow it. A service name, a kept Proton address and a surviving logo are left alone.
+function rewriteSenders(text) {
+	const shown = /(data-testid="message-(?:column|row):sender-address">(?:<[^>]*>)*)([^<]+)/;
+	const from = /title="([^"]*@[^"]*)"\s+data-testid="message-(?:column|row):sender-address"/;
+	const picture = /<img class="[^"]*item-sender-image[^"]*"[^>]*src="[^"]*\.(?:png|jpe?g|webp|gif|avif)"[^>]*>/i;
+	const abbr = /<span data-testid="contact-initials">[^<]*<\/span>/;
+
+	const rows = text.split(/(?=<label class="item-checkbox-label)/);
+
+	return rows
+		.map((row, index) => {
+			const current = index ? row.match(shown)?.[2].trim() : null;
+			if (!current) return row;
+
+			const address = row.match(from)?.[1].split(',')[0].trim() ?? '';
+			const host = address.split('@')[1] ?? '';
+
+			// A kept address is Proton's own, so the account is named after it rather than a person
+			let person = current;
+			if (address && !KEEP_SENDERS.has(current)) {
+				person = KEEP_HOST.test(host) ? 'Proton' : pick(address, 'display', PERSON_NAMES);
+			}
+
+			const letters = person.split(/\s+/).slice(0, 2).map((word) => word[0].toUpperCase());
+			const span = `<span data-testid="contact-initials">${letters.join('')}</span>`;
+
+			return row
+				.replace(shown, (whole, head) => head + person)
+				.replace(abbr, span)
+				.replace(picture, span);
+		})
+		.join('');
+}
+
 function applyMaps(text, maps) {
 	const { emails, hosts, nameTokens, senders, subjects, labels, ids } = maps;
 	const byLength = (map) => [...map].sort((a, b) => b[0].length - a[0].length);
 
-	// Only at the one spot the list renders it, a brand like Proton is a class name elsewhere
-	text = text.replace(SENDER_NAME, (whole, head, name) => head + (senders.get(name.trim()) ?? name));
+	// Only at the one spot the list renders it, a brand like Proton is a class name elsewhere.
+	// A replaced name or address is parked behind a marker until every other pass is through,
+	// or the token pass below swaps a first name inside one of them and two senders end up
+	// sharing one identity.
+	const parked = [];
+	const park = (value) => `\0${parked.push(value) - 1}\0`;
+	text = text.replace(SENDER_NAME, (whole, head, name) => head + park(senders.get(name.trim()) ?? name));
+
+	// Proton's own verified sender badge. It names nobody, and a replacement meant for a label
+	// that happens to carry the same word would otherwise eat it.
+	const badge = /(class="label-proton-badge-text[^"]*">)([^<]*)/g;
+	text = text.replace(badge, (whole, head, word) => head + park(word));
 
 	// Longest first, so a subject that contains another subject is not broken up
 	for (const [from, to] of byLength(subjects)) text = text.replaceAll(from, to);
 	for (const [from, to] of byLength(labels)) text = text.replaceAll(from, to);
 	for (const [from, to] of byLength(emails)) {
-		text = text.replace(new RegExp(escape(from), 'gi'), to);
+		text = text.replace(new RegExp(escape(from), 'gi'), () => park(to));
 	}
 
 	// Bare domains left over in titles, file names and link text
@@ -228,7 +285,10 @@ function applyMaps(text, maps) {
 		text = text.replace(new RegExp(escape(from), 'gi'), to);
 	}
 
-	return text;
+	text = text.replace(/\0(\d+)\0/g, (whole, index) => parked[index]);
+
+	// Last, so a row is named after the address it ends up carrying
+	return rewriteSenders(text);
 }
 
 // Drop the mailbox address out of the saved file and asset folder names

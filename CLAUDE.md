@@ -97,6 +97,19 @@ Rules it follows, which any change must preserve:
 - Folder and label names are collected from three hooks: `sidebar-label:`,
   `folder-dropdown:folder-` and `item-location-`. A collapsed sidebar carries none of them, and
   a folder can show up in the "Move to" list without being in the sidebar at all.
+- A replaced name, address or badge is parked behind a marker until every other pass is through.
+  Without that, the pass that swaps first names reaches into a name that was already replaced,
+  two senders end up sharing one identity, and an address comes out as a pair of halves that
+  belong to different people.
+- A list row is named after the address it carries, not after the name it came with, so two
+  senders stay two senders. A kept Proton address names the row `Proton`; `KEEP_SENDERS` holds
+  the names a scrape sets by hand, `GitHub` among them, which nothing in the page reveals.
+- Sender initials are written from the placeholder name, because Proton spells them out and they
+  are the real person's. A sender picture is pruned with the other assets and leaves an empty box
+  behind, so it is swapped for those initials too. A logo that survived the prune stays.
+- An address that is already a placeholder is skipped, which is what keeps the same sender on the
+  same placeholder across runs. Subjects, labels and conversation ids are still rewritten every
+  time, so a re-run shows a diff even where nothing moved.
 - The script is safe to re-run. A rename that is already done is skipped, because Windows
   refuses a rename onto the same name.
 
@@ -122,6 +135,10 @@ Saved from Proton Mail, one folder per UI state:
 | `2026-09-18_Comfortable` | The list at Proton's comfortable density, which is a different row |
 | `2026-09-18_Troubleshoot_Comfortable_Attachments` | Comfortable again, on a folder whose mails carry attachments |
 | `2026-09-19_Screenshot` | A full mailbox at comfortable density, staged for the README shot |
+
+The screenshot scrape is the one place where subjects and labels are cut shorter than the text
+they stand in for, so a row's label chips render whole instead of ending in an ellipsis. Every
+other scrape keeps the original lengths, which is what the measurements rely on.
 
 A page saved while Stylus is running carries a copy of these tweaks inside itself, in a
 `<style class="stylus">` at the end of the body, and the comfortable scrape does. Left in, it
@@ -160,7 +177,7 @@ with an attachment, and lands on the same 30px with every label spelled out.
 | `deploy/unraid-update.sh` | The cron script on the server: fetch, rebuild, replace the container |
 | `docs/header.svg` | The README's header lockup: the magenta mark over a wordmark running pink to Proton's purple |
 | `docs/logo.png` | The mark at 512px, rasterized from `favicon.svg` for anywhere an SVG will not do |
-| `docs/screenshot.png` | The README shot: `2026-09-19_Screenshot` at the defaults, Views and Folders hidden, corners rounded |
+| `docs/screenshot.png` | The README shot: `2026-09-19_Screenshot` at the defaults, Views and Folders hidden, a narrower sender column, corners rounded |
 
 A tweak is written **once**, as a function of a `Resolve`. The preview asks it for literal
 lengths, the UserCSS build asks it for LESS variables. Never write the rules twice.
@@ -390,7 +407,7 @@ headless, quantize, round the corners, then delete the copy:
 
 ```bash
 curl -s localhost:4321/2026-09-19_Screenshot/all-mail.htm \
-  | sed 's#</head>#<link rel="stylesheet" href="/tweaks.css?on=hideViews&on=hideFolders&still"></head>#' > _shot.htm
+  | sed 's#</head>#<link rel="stylesheet" href="/tweaks.css?on=hideViews&on=hideFolders&senderWidth=8&still"></head>#' > _shot.htm
 chrome --headless=new --hide-scrollbars --window-size=1280,744 \
   --screenshot=C:\path\to\raw.png http://localhost:4321/2026-09-19_Screenshot/_shot.htm
 magick raw.png -colors 256 flat.png
@@ -401,10 +418,17 @@ magick flat.png -alpha set \
 
 The copy has to sit in the scrape's own folder, or the relative asset links break. Not `?all`:
 the picker's defaults plus `hideViews` and `hideFolders`, so the shot shows both what the tweaks
-tighten and what they take away. 744px is a whole number of 30px rows against that window, so
-the list ends on a row edge rather than through one. Chrome needs a Windows path on
-`--screenshot` and writes nothing at all given a POSIX one. The palette pass is lossless to the
-eye and cuts the file by two thirds.
+tighten and what they take away. `senderWidth=8` is the shot's own, below the 15 the picker
+ships: no placeholder name comes near 15rem, and the 100px it hands back is what lets a long
+subject and its label chips both finish before the date. 744px is a whole number of 30px rows
+against that window, so the list ends on a row edge rather than through one. Chrome needs a
+Windows path on `--screenshot` and writes nothing at all given a POSIX one. The palette pass is
+lossless to the eye and cuts the file by two thirds.
+
+A subject that outgrows its row does not ellipsize on its own, it squeezes the label chips
+beside it instead, and a chip caps at 10em whatever is left. Both are cut to fit in the scrape
+itself rather than worked around in CSS. To remeasure after the scrape changes, empty every
+subject in the page and read the gap between where a subject starts and where its chips begin.
 
 The corners are baked into the PNG because GitHub strips `style` off anything in a README, so
 there is no other way to round them. Quantize before masking, not after: quantizing an image
