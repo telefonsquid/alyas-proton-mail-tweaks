@@ -44,6 +44,7 @@ Two deliverables:
 | Distribution format | UserCSS, `@preprocessor less` | Every tweak becomes an `@var checkbox` and every density value an `@var range`, so they stay switchable inside Stylus' own settings panel after install. No revisiting the page to change your mind. |
 | Which tweaks start ticked | Everything that only tightens the UI. Every tweak that takes a feature away starts off | Density is a safe default; removing Views, Folders, Labels or Starred is not, because a visitor who lands on the picker should not have to notice that a part of their sidebar went missing. `removeMoreToggle` stays on: it hides a toggle, not the folders behind it. |
 | Header of the installed file | A banner comment holding a short version of the README, plus `@author`, `@homepageURL`, `@supportURL` and `@license` in the metadata | The `.user.css` travels on its own once installed. Whoever opens it months later gets the tagline, both links, the supported version, the AI note and the Proton disclaimer without going looking. Both URLs live in `REPO_URL` and `PICKER_URL` in `generate.ts`. |
+| Hosting | `adapter-node`, one container, no compose | The install route writes its CSS from the query string, so there is a file per configuration and nothing to prerender. A static export builds without complaining and silently drops the route, which would hand Stylus an HTML page. The built server has no dependencies, so the image is Node plus a megabyte. |
 | Density control | Range sliders | Row height, list padding and dialog height each get an `<input type=range>`, live in the preview. |
 | Look of the picker | Proton's own | The left bar is painted in Proton's prominent theme and the controls follow its metrics, so the page reads as an extension of the app it tweaks. |
 | Font | Inter, self hosted | What Proton ships. The latin subset sits in `src/lib/assets`, so a published page asks no third party for it. |
@@ -76,6 +77,23 @@ So the picker links to `/install/proton-mail-tweaks.user.css`, which serves the 
 picks as a real response. Only the values that differ from the defaults ride along in the
 query string, in the same `?on=`/`?off=`/`?knob=value` shape the scrapes server uses.
 Download and Copy stay for anyone who wants the file itself.
+
+## Deploying
+
+`bun run build` writes `build/`, which is the whole app: roughly a megabyte, no `node_modules`
+beside it, because nothing in `package.json` is a runtime dependency. `node build/index.js`
+serves it.
+
+The `Dockerfile` builds it with Bun, so `bun.lock` decides the versions, and runs it on
+`node:24-alpine`, which is what `adapter-node` targets. Only `build/` crosses into the second
+stage. It listens on 3000 and reads `PORT`, `HOST` and `ORIGIN`.
+
+It runs on an unraid box, rebuilt by `deploy/unraid-update.sh` on a cron job whenever GitHub
+moved ahead. Copy that script into a User Script, do not run it from the repo.
+
+A static export is not an option, and fails quietly rather than loudly: the build leaves the
+install route out and a fallback answers it with HTML. Stylus also refetches the install URL to
+update the style, so it has to keep serving the picked config, not just answer once.
 
 ## Anonymization
 
@@ -190,6 +208,8 @@ too, once its attachment sits in the row as a chip.
 | `scripts/build-usercss.ts` | `bun run build:usercss` → `static/proton-mail-tweaks.user.css` |
 | `scripts/serve-scrapes.ts` | `bun scripts/serve-scrapes.ts` → the scrapes on `localhost:4321` |
 | `tools/anonymize.mjs` | Scrubs a newly added scrape |
+| `Dockerfile` | Two stages: Bun installs and builds, `node:24-alpine` runs `build/` |
+| `deploy/unraid-update.sh` | The cron script on the server: fetch, rebuild, replace the container |
 | `docs/header.svg` | The README's header lockup: the magenta mark over a gradient wordmark |
 
 A tweak is written **once**, as a function of a `Resolve`. The preview asks it for literal
