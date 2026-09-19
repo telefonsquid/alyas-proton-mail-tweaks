@@ -160,7 +160,7 @@ with an attachment, and lands on the same 30px with every label spelled out.
 | `deploy/unraid-update.sh` | The cron script on the server: fetch, rebuild, replace the container |
 | `docs/header.svg` | The README's header lockup: the magenta mark over a wordmark running pink to Proton's purple |
 | `docs/logo.png` | The mark at 512px, rasterized from `favicon.svg` for anywhere an SVG will not do |
-| `docs/screenshot.png` | The README shot: `2026-09-19_Screenshot` at the defaults, Views and Folders hidden |
+| `docs/screenshot.png` | The README shot: `2026-09-19_Screenshot` at the defaults, Views and Folders hidden, corners rounded |
 
 A tweak is written **once**, as a function of a `Resolve`. The preview asks it for literal
 lengths, the UserCSS build asks it for LESS variables. Never write the rules twice.
@@ -386,19 +386,29 @@ pane that is not on screen freezes transitions at their starting value. Without 
 ## Redoing the README screenshot
 
 Same server. Copy the served page next to the scrape with the tweaks linked in, shoot it
-headless, quantize, then delete the copy:
+headless, quantize, round the corners, then delete the copy:
 
 ```bash
 curl -s localhost:4321/2026-09-19_Screenshot/all-mail.htm \
   | sed 's#</head>#<link rel="stylesheet" href="/tweaks.css?on=hideViews&on=hideFolders&still"></head>#' > _shot.htm
 chrome --headless=new --hide-scrollbars --window-size=1280,744 \
   --screenshot=C:\path\to\raw.png http://localhost:4321/2026-09-19_Screenshot/_shot.htm
-magick raw.png -colors 256 PNG8:docs/screenshot.png
+magick raw.png -colors 256 flat.png
+magick flat.png -alpha set \
+  \( -size 1280x744 xc:none -fill white -draw "roundrectangle 0,0,1279,743,14,14" \) \
+  -compose DstIn -composite -colors 255 docs/screenshot.png
 ```
 
 The copy has to sit in the scrape's own folder, or the relative asset links break. Not `?all`:
 the picker's defaults plus `hideViews` and `hideFolders`, so the shot shows both what the tweaks
-tighten and what they take away, and the caption says which. 744px is a whole number of 30px rows
-against that window, so the list ends on a row edge rather than through one. Chrome needs a
-Windows path on `--screenshot` and writes nothing at all given a POSIX one. The palette pass is
-lossless to the eye and cuts the file by two thirds.
+tighten and what they take away. 744px is a whole number of 30px rows against that window, so
+the list ends on a row edge rather than through one. Chrome needs a Windows path on
+`--screenshot` and writes nothing at all given a POSIX one. The palette pass is lossless to the
+eye and cuts the file by two thirds.
+
+The corners are baked into the PNG because GitHub strips `style` off anything in a README, so
+there is no other way to round them. Quantize before masking, not after: quantizing an image
+that already has transparent corners folds the corner into the palette and it comes back at
+1/255 alpha instead of none. 14px reads as Proton's own 8px once the 1280px shot is drawn at
+the `width="720"` the README sets, which also keeps it off both margins. The shot carries no
+caption.

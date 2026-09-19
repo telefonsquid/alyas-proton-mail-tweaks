@@ -13,9 +13,7 @@ A set of CSS tweaks that make Proton Mail's web UI denser, prettier and drop the
 <br>
 <br>
 
-<img src="docs/screenshot.png" alt="Proton Mail with the tweaks applied: 21 mail rows on a 1280x744 window, sidebar with Views and Folders switched off">
-
-<sup>Comfortable density, the picker's defaults, plus Views and Folders switched off.</sup>
+<img src="docs/screenshot.png" width="720" alt="Proton Mail with the tweaks applied: 21 mail rows on a 1280x744 window, sidebar with Views and Folders switched off">
 
 </div>
 
