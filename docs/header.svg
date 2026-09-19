@@ -25,13 +25,12 @@
       <stop offset="1" stop-color="#FF41DD"/>
     </linearGradient>
     <linearGradient id="wordmark" x1="40" y1="0" x2="680" y2="0" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#FF8EEC"/>
-      <stop offset="0.5" stop-color="#FF41DD"/>
-      <stop offset="1" stop-color="#FF8EEC"/>
+      <stop stop-color="#FF41DD"/>
+      <stop offset="1" stop-color="#6D4AFF"/>
     </linearGradient>
     <linearGradient id="rule" x1="312" y1="0" x2="408" y2="0" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#FF8EEC"/>
-      <stop offset="1" stop-color="#FF41DD"/>
+      <stop stop-color="#FF41DD"/>
+      <stop offset="1" stop-color="#6D4AFF"/>
     </linearGradient>
   </defs>
 </svg>

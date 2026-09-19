@@ -210,7 +210,8 @@ too, once its attachment sits in the row as a chip.
 | `tools/anonymize.mjs` | Scrubs a newly added scrape |
 | `Dockerfile` | Two stages: Bun installs and builds, `node:24-alpine` runs `build/` |
 | `deploy/unraid-update.sh` | The cron script on the server: fetch, rebuild, replace the container |
-| `docs/header.svg` | The README's header lockup: the magenta mark over a gradient wordmark |
+| `docs/header.svg` | The README's header lockup: the magenta mark over a wordmark running pink to Proton's purple |
+| `docs/logo.png` | The mark at 512px, rasterized from `favicon.svg` for anywhere an SVG will not do |
 
 A tweak is written **once**, as a function of a `Resolve`. The preview asks it for literal
 lengths, the UserCSS build asks it for LESS variables. Never write the rules twice.
