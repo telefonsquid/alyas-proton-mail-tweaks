@@ -49,7 +49,7 @@ Every tweak can be switched individually, some are slider-configurable.
 
 | Proton Mail Version | Tweaks Version |
 | --- | --- |
-| 5.0.132.2 | ✅ v1.0.0 |
+| 5.0.132.2 - 5.0.133.5 | ✅ v1.0.0 |
 | Pre 5.0.132.2 | ❌ |
 
 | Style | Compability |
