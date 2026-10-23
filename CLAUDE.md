@@ -59,12 +59,12 @@ anyone who wants the file itself.
 ## Deploying
 
 `bun run build` writes `build/`, which is the whole app: roughly a megabyte, no `node_modules`
-beside it, because nothing in `package.json` is a runtime dependency. `node build/index.js`
-serves it.
+beside it, because nothing in `package.json` is a runtime dependency. `bun build/index.js`
+serves it, through `svelte-adapter-bun`. Node does not run it.
 
-The `Dockerfile` builds it with Bun, so `bun.lock` decides the versions, and runs it on
-`node:24-alpine`, which is what `adapter-node` targets. Only `build/` crosses into the second
-stage. It listens on 3000 and reads `PORT`, `HOST` and `ORIGIN`.
+The `Dockerfile` builds and runs it on `oven/bun`, pinned to an exact version in both stages and
+never below 1.4.4, the first with the fix for CVE-2026-111497. Only `build/` crosses into the
+second stage. It listens on 3000 and reads `PORT`, `HOST` and `ORIGIN`.
 
 It runs on an unraid box, rebuilt by `deploy/unraid-update.sh` on a cron job whenever GitHub
 moved ahead. Copy that script into a User Script, do not run it from the repo.
@@ -173,7 +173,7 @@ with an attachment, and lands on the same 30px with every label spelled out.
 | `scripts/build-usercss.ts` | `bun run build:usercss` → `static/proton-mail-tweaks.user.css` |
 | `scripts/serve-scrapes.ts` | `bun scripts/serve-scrapes.ts` → the scrapes on `localhost:4321` |
 | `tools/anonymize.mjs` | Scrubs a newly added scrape |
-| `Dockerfile` | Two stages: Bun installs and builds, `node:24-alpine` runs `build/` |
+| `Dockerfile` | Two stages on the same pinned `oven/bun`: one installs and builds, one runs `build/` |
 | `deploy/unraid-update.sh` | The cron script on the server: fetch, rebuild, replace the container |
 | `docs/header.svg` | The README's header lockup: the magenta mark over a wordmark running pink to Proton's purple |
 | `docs/logo.png` | The mark at 512px, rasterized from `favicon.svg` for anywhere an SVG will not do |

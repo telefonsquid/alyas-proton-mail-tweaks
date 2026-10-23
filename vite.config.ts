@@ -1,4 +1,4 @@
-import adapter from '@sveltejs/adapter-node';
+import adapter from 'svelte-adapter-bun';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
@@ -14,7 +14,7 @@ export default defineConfig({
 				experimental: { async: true }
 			},
 
-			// Node, because the install route writes its CSS per query string and a static export
+			// A server, because the install route writes its CSS per query string and a static export
 			// would drop it
 			adapter: adapter(),
 
